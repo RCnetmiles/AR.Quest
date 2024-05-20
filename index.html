@@ -33,7 +33,13 @@
 
         }
 
-        #resultScreen {
+        #nicknameScreen, #instructionsScreen, #gameScreen, #resultScreen, #nextGameScreen {
+
+            display: none;
+
+        }
+
+        .screen {
 
             display: flex;
 
@@ -43,25 +49,75 @@
 
         }
 
-        button {
+        input, button {
 
-            margin-top: 20px;
+            margin: 10px;
 
-            padding: 10px 20px;
+            padding: 10px;
 
             font-size: 16px;
 
-            background-color: #fdb813;
+        }
 
-            color: #00539c;
+        canvas {
 
-            border: none;
+            border: 1px solid #000000;
 
-            border-radius: 5px;
+            background-color: #fff;
+
+        }
+
+        #controls {
+
+            position: fixed;
+
+            bottom: 10%;
+
+            left: 50%;
+
+            transform: translateX(-50%);
+
+            display: grid;
+
+            grid-template-columns: repeat(3, 40px);
+
+            grid-template-rows: repeat(3, 40px);
+
+            gap: 5px;
+
+        }
+
+        .control-button {
+
+            width: 40px;
+
+            height: 40px;
+
+            background-color: #333;
+
+            color: #fff;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 20px;
 
             cursor: pointer;
 
+            user-select: none;
+
         }
+
+        .up { grid-column: 2 / 3; grid-row: 1 / 2; }
+
+        .left { grid-column: 1 / 2; grid-row: 2 / 3; }
+
+        .down { grid-column: 2 / 3; grid-row: 3 / 4; }
+
+        .right { grid-column: 3 / 4; grid-row: 2 / 3; }
       
       section {
       margin-bottom: 20px;
@@ -70,6 +126,13 @@
       border-radius: 10px;
       padding: 20px;
       box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);} 
+      
+      footer {
+      background-color: #00539c;
+      color: #fdb813;
+      padding: 20px;
+      text-align: center;
+    }
 
     </style>
 
@@ -77,7 +140,51 @@
 
 <body>
 
-    <div id="resultScreen">
+    <div id="nicknameScreen" class="screen">
+
+        <h2>Insira seu Nickname</h2>
+      <section>
+
+        <input type="text" id="nicknameInput" placeholder="Nickname">
+
+        <button id="nicknameButton">Próximo</button>
+      </section>
+
+    </div>
+
+    <div id="instructionsScreen" class="screen">
+
+        <h2>Instruções do Jogo</h2>
+      <section>
+
+        <p>Use as setas para controlar a cobrinha. Colete os pontos para crescer!</p>
+
+        <button id="instructionsButton">Próximo</button>
+      </section>
+
+    </div>
+
+    <div id="gameScreen" class="screen">
+
+        <h2 id="nicknameDisplay"></h2>
+
+        <canvas id="gameCanvas" width="300" height="300"></canvas>
+
+        <div id="controls">
+
+            <div class="control-button up" data-direction="UP">↑</div>
+
+            <div class="control-button left" data-direction="LEFT">←</div>
+
+            <div class="control-button down" data-direction="DOWN">↓</div>
+
+            <div class="control-button right" data-direction="RIGHT">→</div>
+
+        </div>
+
+    </div>
+
+    <div id="resultScreen" class="screen">
 
         <h2>Game Over</h2>
       <section>
@@ -89,21 +196,303 @@
 
     </div>
 
+    <div id="nextGameScreen" class="screen">
+
+        <h2>Pedra, Papel ou Tesoura</h2>
+
+        <p>Sua pontuação atual: <span id="pptScore">0</span></p>
+
+        <div>
+
+            <button class="ppt-button" data-choice="rock">Pedra</button>
+
+            <button class="ppt-button" data-choice="paper">Papel</button>
+
+            <button class="ppt-button" data-choice="scissors">Tesoura</button>
+
+        </div>
+
+    </div>
+
     <script>
+
+        document.getElementById('nicknameScreen').style.display = 'flex';
+
+        document.getElementById('nicknameButton').addEventListener('click', () => {
+
+            const nickname = document.getElementById('nicknameInput').value.trim();
+
+            if (nickname) {
+
+                document.getElementById('nicknameDisplay').textContent = `Bem-vindo, ${nickname}!`;
+
+                document.getElementById('nicknameScreen').style.display = 'none';
+
+                document.getElementById('instructionsScreen').style.display = 'flex';
+
+            }
+
+        });
+
+        document.getElementById('instructionsButton').addEventListener('click', () => {
+
+            document.getElementById('instructionsScreen').style.display = 'none';
+
+            document.getElementById('gameScreen').style.display = 'flex';
+
+            startGame();
+
+        });
 
         let totalScore = 0;
 
-        document.getElementById('totalScore').textContent = totalScore;
+        let pptScore = 0;
+
+        let roundCount = 0;
+
+        let userChoice;
+
+        function generateComputerChoice() {
+
+            const choices = ['rock', 'paper', 'scissors'];
+
+            return choices[Math.floor(Math.random() * choices.length)];
+
+        }
+
+        function playRound(user, computer) {
+
+            if (user === computer) {
+
+                return 'draw';
+
+            } else if ((user === 'rock' && computer === 'scissors') ||
+
+                (user === 'paper' && computer === 'rock') ||
+
+                (user === 'scissors' && computer === 'paper')) {
+
+                return 'win';
+
+            } else {
+
+                return 'lose';
+
+            }
+
+        }
+        document.querySelectorAll('.ppt-button').forEach(button => {
+
+            button.addEventListener('click', () => {
+
+                userChoice = button.getAttribute('data-choice');
+
+                const computerChoice = generateComputerChoice();
+
+                const result = playRound(userChoice, computerChoice);
+
+                if (result === 'win') {
+
+                    pptScore++;
+
+                }
+
+                roundCount++;
+
+                if (roundCount === 3) {
+
+                    totalScore += pptScore;
+
+                    document.getElementById('resultScreen').style.display = 'flex';
+
+                    document.getElementById('nextGameScreen').style.display = 'none';
+
+                    document.getElementById('totalScore').textContent = totalScore;
+
+                } else {
+
+                    document.getElementById('pptScore').textContent = pptScore;
+
+                }
+
+            });
+
+        });
+
+        let totalScore = 0;
+
+        const canvas = document.getElementById('gameCanvas');
+
+        const ctx = canvas.getContext('2d');
+
+        const box = 20;
+
+        let snake = [];
+
+        snake[0] = { x: 9 * box, y: 10 * box };
+
+        let direction = null;
+
+        let food = generateFood();
+
+        let score = 0;
+
+        function generateFood() {
+
+            let newFood;
+
+            let foodOnSnake;
+
+            do {
+
+                newFood = {
+
+                    x: Math.floor(Math.random() * 15 + 1) * box,
+
+                    y: Math.floor(Math.random() * 15 + 1) * box,
+
+                };
+
+                foodOnSnake = snake.some(segment => segment.x === newFood.x && segment.y === newFood.y);
+
+            } while (foodOnSnake);
+
+            return newFood;
+
+        }
+
+        function draw() {
+
+            ctx.fillStyle = 'white';
+
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < snake.length; i++) {
+
+                ctx.fillStyle = i === 0 ? 'green' : 'lightgreen';
+
+                ctx.fillRect(snake[i].x, snake[i].y, box, box);
+
+                ctx.strokeStyle = 'darkgreen';
+
+                ctx.strokeRect(snake[i].x, snake[i].y, box, box);
+
+            }
+
+            ctx.fillStyle = 'red';
+
+            ctx.fillRect(food.x, food.y, box, box);
+
+            let snakeX = snake[0].x;
+
+            let snakeY = snake[0].y;
+
+            if (direction === 'LEFT') snakeX -= box;
+
+            if (direction === 'UP') snakeY -= box;
+
+            if (direction === 'RIGHT') snakeX += box;
+
+            if (direction === 'DOWN') snakeY += box;
+
+            if (snakeX === food.x && snakeY === food.y) {
+
+                score++;
+
+                food = generateFood();
+
+            } else {
+
+                snake.pop();
+
+            }
+
+            let newHead = { x: snakeX, y: snakeY };
+
+            if (snakeX < 0 || snakeY < 0 || snakeX >= canvas.width || snakeY >= canvas.height || collision(newHead, snake)) {
+
+                clearInterval(game);
+
+                totalScore += score;
+
+                document.getElementById('gameScreen').style.display = 'none';
+
+                document.getElementById('resultScreen').style.display = 'flex';
+
+                document.getElementById('totalScore').textContent = totalScore;
+
+                return;
+
+            }
+
+            snake.unshift(newHead);
+
+            ctx.fillStyle = 'black';
+
+            ctx.font = '20px Arial';
+
+            ctx.fillText('Score: ' + score, 5, canvas.height - 5);
+
+        }
+
+        function collision(head, array) {
+
+            for (let i = 0; i < array.length; i++) {
+
+                if (head.x === array[i].x && head.y === array[i].y) {
+
+                    return true;
+
+                }
+
+            }
+
+            return false;
+
+        }
+
+        function startGame() {
+
+            direction = 'RIGHT';
+
+            game = setInterval(draw, 260);
+
+        }
+
+        document.querySelectorAll('.control-button').forEach(button => {
+
+            button.addEventListener('click', () => {
+
+                const newDirection = button.getAttribute('data-direction');
+
+                if (newDirection === 'LEFT' && direction !== 'RIGHT') direction = newDirection;
+
+                if (newDirection === 'UP' && direction !== 'DOWN') direction = newDirection;
+
+                if (newDirection === 'RIGHT' && direction !== 'LEFT') direction = newDirection;
+
+                if (newDirection === 'DOWN' && direction !== 'UP') direction = newDirection;
+
+            });
+
+        });
 
         document.getElementById('nextGameButton').addEventListener('click', () => {
 
-            // Lógica para ir para o próximo jogo (Pedra, Papel ou Tesoura) aqui
+            document.getElementById('resultScreen').style.display = 'none';
 
-            alert('Próximo jogo: Pedra, Papel ou Tesoura');
+            document.getElementById('nextGameScreen').style.display = 'flex';
+
+            document.getElementById('pptScore').textContent = pptScore;
+
+            pptScore = 0;
+
+            roundCount = 0;
 
         });
 
     </script>
 
-  </body>
+</body>
 </html>
+
