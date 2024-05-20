@@ -1,88 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WebAR com Detecção da Palma da Mão</title>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.142.0"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.0.3"></script>
-  <script src="https://cdn.jsdelivr.net/npm/ar.js@2.0.1"></script>
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Multigamer - Snake Game</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        #nicknameScreen, #instructionsScreen, #gameScreen, #gameOverScreen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+        #gameCanvas {
+            border: 1px solid #000;
+            background-color: #fff;
+        }
+        .btn {
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .joystick {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+        }
+        .joystick div {
+            width: 50px;
+            height: 50px;
+            background-color: #007bff;
+            border-radius: 50%;
+            margin: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-  <canvas id="renderer"></canvas>
-  <script>
-    // Definir cena e câmera
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    <div id="nicknameScreen">
+        <h1>Bem-vindo ao Multigamer!</h1>
+        <input type="text" id="nicknameInput" placeholder="Digite seu nickname">
+        <button class="btn" onclick="showInstructions()">Próximo</button>
+    </div>
+    <div id="instructionsScreen">
+        <h1>Instruções</h1>
+        <p>Use o joystick para controlar a cobrinha. Coma os alimentos para ganhar pontos. Se a cobrinha bater nas paredes ou em si mesma, é game over.</p>
+        <button class="btn" onclick="startGame()">Próximo</button>
+    </div>
+    <div id="gameScreen">
+        <canvas id="gameCanvas" width="300" height="300"></canvas>
+        <div class="joystick">
+            <div onclick="moveSnake('up')">↑</div>
+            <div onclick="moveSnake('left')">←</div>
+            <div onclick="moveSnake('down')">↓</div>
+            <div onclick="moveSnake('right')">→</div>
+        </div>
+    </div>
+    <div id="gameOverScreen">
+        <h1>Game Over</h1>
+        <p>Sua pontuação: <span id="finalScore"></span></p>
+        <button class="btn" onclick="showNextGame()">Próximo Minigame</button>
+    </div>
 
-    // Definir renderizador
-    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('renderer') });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-
-    // Definir luz ambiente
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    scene.add(ambientLight);
-
-    // Definir esfera
-    const sphereGeometry = new THREE.SphereGeometry(0.1, 32, 32);
-    const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-    const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-    sphere.visible = false;
-    scene.add(sphere);
-
-    // Definir detector de mãos
-    const hands = new mediapipe.Hands({
-      maxNumHands: 1,
-      modelComplexity: 0,
-      locateLandmarks: true
-    });
-
-    // Definir AR.js
-    const ar = new AR({
-      sourceType: 'webcam'
-    });
-
-    ar.on('webcamReady', () => {
-      ar.scanMarker('hiro', () => {
-        // Marcador Hiro detectado, iniciar loop de renderização
-        animate();
-      });
-    });
-
-    // Função de animação
-    function animate() {
-      requestAnimationFrame(animate);
-
-      // Processar imagem da webcam
-      ar.process(renderer.domElement);
-
-      // Detectar mãos na imagem
-      hands.process(renderer.domElement);
-
-      // Obter dados da mão
-      const handLandmarks = hands.results.multiHandLandmarks[0];
-
-      // Verificar se a palma da mão está presente
-      if (handLandmarks) {
-        // Obter posição da palma da mão
-        const palmPosition = handLandmarks[0];
-
-        // Posicionar a esfera na palma da mão
-        sphere.position.set(palmPosition[0], palmPosition[1], palmPosition[2]);
-        sphere.visible = true;
-      } else {
-        sphere.visible = false;
-      }
-
-      // Renderizar cena
-      renderer.render(scene, camera);
-    }
-  </script>
+    <script src="snake.js"></script>
+</body>
+</html>
 </body>
 </html>
