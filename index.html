@@ -1,91 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Multigamer - Snake Game</title>
-    <style>
-        body {
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f0f0f0;
-            font-family: Arial, sans-serif;
-        }
-        #nicknameScreen, #instructionsScreen, #gameScreen, #gameOverScreen {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-        }
-        #gameCanvas {
-            border: 1px solid #000;
-            background-color: #fff;
-        }
-        .btn {
-            padding: 10px 20px;
-            margin: 10px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .btn:hover {
-            background-color: #0056b3;
-        }
-        .joystick {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            align-items: center;
-        }
-        .joystick div {
-            width: 50px;
-            height: 50px;
-            background-color: #007bff;
-            border-radius: 50%;
-            margin: 5px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #fff;
-            font-size: 18px;
-            cursor: pointer;
-        }
-    </style>
-</head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cobrinha Multijogador</title>
+  <link rel="stylesheet" href="style.css"> </head>
 <body>
-    <div id="nicknameScreen">
-        <h1>Bem-vindo ao Multigamer!</h1>
-        <input type="text" id="nicknameInput" placeholder="Digite seu nickname">
-        <button class="btn" onclick="showInstructions()">Próximo</button>
-    </div>
-    <div id="instructionsScreen">
-        <h1>Instruções</h1>
-        <p>Use o joystick para controlar a cobrinha. Coma os alimentos para ganhar pontos. Se a cobrinha bater nas paredes ou em si mesma, é game over.</p>
-        <button class="btn" onclick="startGame()">Próximo</button>
-    </div>
-    <div id="gameScreen">
-        <canvas id="gameCanvas" width="300" height="300"></canvas>
-        <div class="joystick">
-            <div onclick="moveSnake('up')">↑</div>
-            <div onclick="moveSnake('left')">←</div>
-            <div onclick="moveSnake('down')">↓</div>
-            <div onclick="moveSnake('right')">→</div>
-        </div>
-    </div>
-    <div id="gameOverScreen">
-        <h1>Game Over</h1>
-        <p>Sua pontuação: <span id="finalScore"></span></p>
-        <button class="btn" onclick="showNextGame()">Próximo Minigame</button>
+  <div class="container">
+    <h1>Cobrinha Multijogador</h1>
+
+    <div id="login">
+      <input type="text" id="nickname" placeholder="Apelido">
+      <button id="btn-entrar">Entrar</button>
     </div>
 
-    <script src="snake.js"></script>
-</body>
-</html>
-</body>
+    </div>
+  <script src="script.js"></script> </body>
 </html>
