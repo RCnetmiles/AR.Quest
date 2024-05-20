@@ -78,7 +78,7 @@
         document.getElementById('nicknameButton').addEventListener('click', () => {
             const nickname = document.getElementById('nicknameInput').value.trim();
             if (nickname) {
-                document.getElementById('nicknameDisplay').textContent = Bem-vindo, ${nickname}!;
+                document.getElementById('nicknameDisplay').textContent = `Bem-vindo, ${nickname}!`;
                 document.getElementById('nicknameScreen').style.display = 'none';
                 document.getElementById('instructionsScreen').style.display = 'flex';
             }
@@ -186,8 +186,8 @@
                 direction = y > 0 ? 'DOWN' : 'UP';
             }
 
-            joystickInner.style.left = ${(x / rect.width) * 100 + 25}%;
-            joystickInner.style.top = ${(y / rect.height) * 100 + 25}%;
+            joystickInner.style.left = `${(x / rect.width) * 100 + 25}%`;
+            joystickInner.style.top = `${(y / rect.height) * 100 + 25}%`;
         }
     </script>
 </body>
