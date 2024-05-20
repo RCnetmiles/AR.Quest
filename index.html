@@ -1,194 +1,109 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Multigamer</title>
+
     <style>
+
         body {
+
             margin: 0;
-            font-family: Arial, sans-serif;
+
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
             display: flex;
+
             flex-direction: column;
+
             align-items: center;
+
             justify-content: center;
+
             height: 100vh;
-            background-color: #f4f4f4;
+
+            background-color: #00539c;
+
+            color: #fdb813;
+
         }
-        #nicknameScreen, #instructionsScreen, #gameScreen {
-            display: none;
-        }
-        .screen {
+
+        #resultScreen {
+
             display: flex;
+
             flex-direction: column;
+
             align-items: center;
+
         }
-        input, button {
-            margin: 10px;
-            padding: 10px;
+
+        button {
+
+            margin-top: 20px;
+
+            padding: 10px 20px;
+
             font-size: 16px;
+
+            background-color: #fdb813;
+
+            color: #00539c;
+
+            border: none;
+
+            border-radius: 5px;
+
+            cursor: pointer;
+
         }
-        canvas {
-            border: 1px solid #000;
-            background-color: #fff;
-        }
-        #joystick {
-            position: fixed;
-            bottom: 10%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 200px;
-            height: 200px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 50%;
-        }
-        #joystick div {
-            position: absolute;
-            width: 50%;
-            height: 50%;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 50%;
-            left: 25%;
-            top: 25%;
-        }
+      
+      section {
+      margin-bottom: 20px;
+      color:   #333;
+      background-color: WhiteSmoke;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);} 
+
     </style>
+
 </head>
+
 <body>
-    <div id="nicknameScreen" class="screen">
-        <h2>Insira seu Nickname</h2>
-        <input type="text" id="nicknameInput" placeholder="Nickname">
-        <button id="nicknameButton">Próximo</button>
-    </div>
 
-    <div id="instructionsScreen" class="screen">
-        <h2>Instruções do Jogo</h2>
-        <p>Use o joystick para controlar a cobrinha. Colete os pontos para crescer!</p>
-        <button id="instructionsButton">Próximo</button>
-    </div>
+    <div id="resultScreen">
 
-    <div id="gameScreen" class="screen">
-        <h2 id="nicknameDisplay"></h2>
-        <canvas id="gameCanvas" width="300" height="300"></canvas>
-        <div id="joystick"><div></div></div>
+        <h2>Game Over</h2>
+      <section>
+
+        <p>Sua pontuação até agora: <span id="totalScore">0</span></p>
+
+        <button id="nextGameButton">Próximo</button>
+      </section>
+
     </div>
 
     <script>
-        document.getElementById('nicknameScreen').style.display = 'flex';
 
-        document.getElementById('nicknameButton').addEventListener('click', () => {
-            const nickname = document.getElementById('nicknameInput').value.trim();
-            if (nickname) {
-                document.getElementById('nicknameDisplay').textContent = `Bem-vindo, ${nickname}!`;
-                document.getElementById('nicknameScreen').style.display = 'none';
-                document.getElementById('instructionsScreen').style.display = 'flex';
-            }
+        let totalScore = 0;
+
+        document.getElementById('totalScore').textContent = totalScore;
+
+        document.getElementById('nextGameButton').addEventListener('click', () => {
+
+            // Lógica para ir para o próximo jogo (Pedra, Papel ou Tesoura) aqui
+
+            alert('Próximo jogo: Pedra, Papel ou Tesoura');
+
         });
 
-        document.getElementById('instructionsButton').addEventListener('click', () => {
-            document.getElementById('instructionsScreen').style.display = 'none';
-            document.getElementById('gameScreen').style.display = 'flex';
-            startGame();
-        });
-
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const box = 20;
-        let snake = [];
-        snake[0] = { x: 9 * box, y: 10 * box };
-        let direction = null;
-        let food = {
-            x: Math.floor(Math.random() * 15 + 1) * box,
-            y: Math.floor(Math.random() * 15 + 1) * box
-        };
-        let score = 0;
-
-        function draw() {
-            ctx.fillStyle = 'white';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            for (let i = 0; i < snake.length; i++) {
-                ctx.fillStyle = i == 0 ? 'green' : 'lightgreen';
-                ctx.fillRect(snake[i].x, snake[i].y, box, box);
-                ctx.strokeStyle = 'darkgreen';
-                ctx.strokeRect(snake[i].x, snake[i].y, box, box);
-            }
-
-            ctx.fillStyle = 'red';
-            ctx.fillRect(food.x, food.y, box, box);
-
-            let snakeX = snake[0].x;
-            let snakeY = snake[0].y;
-
-            if (direction == 'LEFT') snakeX -= box;
-            if (direction == 'UP') snakeY -= box;
-            if (direction == 'RIGHT') snakeX += box;
-            if (direction == 'DOWN') snakeY += box;
-
-            if (snakeX == food.x && snakeY == food.y) {
-                score++;
-                food = {
-                    x: Math.floor(Math.random() * 15 + 1) * box,
-                    y: Math.floor(Math.random() * 15 + 1) * box
-                };
-            } else {
-                snake.pop();
-            }
-
-            let newHead = { x: snakeX, y: snakeY };
-
-            if (snakeX < 0 || snakeY < 0 || snakeX >= canvas.width || snakeY >= canvas.height || collision(newHead, snake)) {
-                clearInterval(game);
-                alert('Game Over');
-            }
-
-            snake.unshift(newHead);
-
-            ctx.fillStyle = 'black';
-            ctx.font = '20px Arial';
-            ctx.fillText('Score: ' + score, 5, canvas.height - 5);
-        }
-
-        function collision(head, array) {
-            for (let i = 0; i < array.length; i++) {
-                if (head.x == array[i].x && head.y == array[i].y) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        function startGame() {
-            direction = 'RIGHT';
-            game = setInterval(draw, 250);
-        }
-
-        // Joystick control
-        const joystick = document.getElementById('joystick');
-        const joystickInner = joystick.querySelector('div');
-
-        joystick.addEventListener('touchstart', handleJoystick, false);
-        joystick.addEventListener('touchmove', handleJoystick, false);
-        joystick.addEventListener('touchend', () => {
-            joystickInner.style.left = '25%';
-            joystickInner.style.top = '25%';
-        }, false);
-
-        function handleJoystick(e) {
-            const touch = e.touches[0];
-            const rect = joystick.getBoundingClientRect();
-            const x = touch.clientX - rect.left - rect.width / 2;
-            const y = touch.clientY - rect.top - rect.height / 2;
-            const angle = Math.atan2(y, x);
-
-            if (Math.abs(x) > Math.abs(y)) {
-                direction = x > 0 ? 'RIGHT' : 'LEFT';
-            } else {
-                direction = y > 0 ? 'DOWN' : 'UP';
-            }
-
-            joystickInner.style.left = `${(x / rect.width) * 100 + 25}%`;
-            joystickInner.style.top = `${(y / rect.height) * 100 + 25}%`;
-        }
     </script>
-</body>
+
+  </body>
 </html>
