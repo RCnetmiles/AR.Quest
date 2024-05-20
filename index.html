@@ -197,19 +197,9 @@
 
         <section>
 
-            <p>Sua pontuação no Snake: <span id="totalSnakeScore">0</span></p>
+            <p>Sua pontuação no Snake: <span id="snakeScoreResult">0</span></p>
 
             <p>Sua pontuação no Pedra, Papel ou Tesoura: <span id="pptScore">0</span></p>
-
-            <div id="choices">
-
-                <button class="ppt-button" data-choice="rock">Pedra</button>
-
-                <button class="ppt-button" data-choice="paper">Papel</button>
-
-                <button class="ppt-button" data-choice="scissors">Tesoura</button>
-
-            </div>
 
         </section>
 
@@ -217,11 +207,17 @@
 
     <script>
 
+        let nickname = '';
+
+        let snakeScore = 0;
+
+        let pptScore = 0;
+
         document.getElementById('nicknameScreen').style.display = 'flex';
 
         document.getElementById('nicknameButton').addEventListener('click', () => {
 
-            const nickname = document.getElementById('nicknameInput').value.trim();
+            nickname = document.getElementById('nicknameInput').value.trim();
 
             if (nickname) {
 
@@ -236,8 +232,6 @@
             }
 
         });
-
-        let snakeScore = 0;
 
         const canvas = document.getElementById('gameCanvas');
 
@@ -335,8 +329,6 @@
 
                 document.getElementById('snakeScore').textContent = snakeScore;
 
-                return;
-
             }
 
             snake.unshift(newHead);
@@ -391,6 +383,8 @@
 
             document.getElementById('pptScreen').style.display = 'flex';
 
+            startPPTGame();
+
         });
 
         document.querySelectorAll('.ppt-button').forEach(button => {
@@ -439,31 +433,35 @@
 
         }
 
-        let pptScore = 0;
-
-        let consecutiveWins = 0;
-
         function updatePPTScore(result) {
 
             if (result === 'win') {
 
                 pptScore++;
 
-                consecutiveWins++;
-
-            } else {
-
-                consecutiveWins = 0;
-
-            }
-
-            if (consecutiveWins === 3) {
-
-                pptScore += 5; // Pontuação extra para 3 vitórias consecutivas
-
             }
 
             document.getElementById('pptScore').textContent = pptScore;
+
+        }
+
+        function startPPTGame() {
+
+            pptScore = 0;
+
+            consecutiveWins = 0;
+
+        }
+
+        function showFinalResults() {
+
+            const totalScore = snakeScore + pptScore;
+
+            document.getElementById('snakeScoreResult').textContent = snakeScore;
+
+            document.getElementById('pptScore').textContent = pptScore;
+
+            alert(`Parabéns ${nickname}!\n\nPontuação Final:\nSnake: ${snakeScore}\nPedra, Papel ou Tesoura: ${pptScore}\n\nPontuação Total: ${totalScore}`);
 
         }
 
