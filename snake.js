@@ -15,6 +15,7 @@ function showInstructions() {
 
 // Function to start the game
 function startGame() {
+  document.getElementById('btn-entrar').addEventListener('click', startGame);
   document.getElementById('instructionsScreen').style.display = 'none';
   document.getElementById('gameScreen').style.display = 'flex';
   canvas = document.getElementById('gameCanvas');
