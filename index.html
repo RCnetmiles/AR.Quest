@@ -7,7 +7,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Multigamer</title>
+    <title>Minigames</title>
 
     <style>
 
@@ -33,19 +33,9 @@
 
         }
 
-        #nicknameScreen, #instructionsScreen, #gameScreen, #resultScreen, #nextGameScreen {
-
-            display: none;
-
-        }
-
         .screen {
 
-            display: flex;
-
-            flex-direction: column;
-
-            align-items: center;
+            display: none;
 
         }
 
@@ -118,21 +108,34 @@
         .down { grid-column: 2 / 3; grid-row: 3 / 4; }
 
         .right { grid-column: 3 / 4; grid-row: 2 / 3; }
-      
-      section {
-      margin-bottom: 20px;
-      color:   #333;
-      background-color: WhiteSmoke;
-      border-radius: 10px;
-      padding: 20px;
-      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);} 
-      
-      footer {
-      background-color: #00539c;
-      color: #fdb813;
-      padding: 20px;
-      text-align: center;
-    }
+
+        section {
+
+            margin-bottom: 20px;
+
+            color: #333;
+
+            background-color: WhiteSmoke;
+
+            border-radius: 10px;
+
+            padding: 20px;
+
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+
+        }
+
+        footer {
+
+            background-color: #00539c;
+
+            color: #fdb813;
+
+            padding: 20px;
+
+            text-align: center;
+
+        }
 
     </style>
 
@@ -143,24 +146,14 @@
     <div id="nicknameScreen" class="screen">
 
         <h2>Insira seu Nickname</h2>
-      <section>
 
-        <input type="text" id="nicknameInput" placeholder="Nickname">
+        <section>
 
-        <button id="nicknameButton">Próximo</button>
-      </section>
+            <input type="text" id="nicknameInput" placeholder="Nickname">
 
-    </div>
+            <button id="nicknameButton">Próximo</button>
 
-    <div id="instructionsScreen" class="screen">
-
-        <h2>Instruções do Jogo</h2>
-      <section>
-
-        <p>Use as setas para controlar a cobrinha. Colete os pontos para crescer!</p>
-
-        <button id="instructionsButton">Próximo</button>
-      </section>
+        </section>
 
     </div>
 
@@ -187,30 +180,38 @@
     <div id="resultScreen" class="screen">
 
         <h2>Game Over</h2>
-      <section>
 
-        <p>Sua pontuação até agora: <span id="totalScore">0</span></p>
+        <section>
 
-        <button id="nextGameButton">Próximo</button>
-      </section>
+            <p>Sua pontuação no Snake: <span id="snakeScore">0</span></p>
+
+            <button id="nextGameButton">Próximo</button>
+
+        </section>
 
     </div>
 
-    <div id="nextGameScreen" class="screen">
+    <div id="pptScreen" class="screen">
 
         <h2>Pedra, Papel ou Tesoura</h2>
 
-        <p>Sua pontuação atual: <span id="pptScore">0</span></p>
+        <section>
 
-        <div>
+            <p>Sua pontuação no Snake: <span id="totalSnakeScore">0</span></p>
 
-            <button class="ppt-button" data-choice="rock">Pedra</button>
+            <p>Sua pontuação no Pedra, Papel ou Tesoura: <span id="pptScore">0</span></p>
 
-            <button class="ppt-button" data-choice="paper">Papel</button>
+            <div id="choices">
 
-            <button class="ppt-button" data-choice="scissors">Tesoura</button>
+                <button class="ppt-button" data-choice="rock">Pedra</button>
 
-        </div>
+                <button class="ppt-button" data-choice="paper">Papel</button>
+
+                <button class="ppt-button" data-choice="scissors">Tesoura</button>
+
+            </div>
+
+        </section>
 
     </div>
 
@@ -228,98 +229,15 @@
 
                 document.getElementById('nicknameScreen').style.display = 'none';
 
-                document.getElementById('instructionsScreen').style.display = 'flex';
+                document.getElementById('gameScreen').style.display = 'flex';
+
+                startSnakeGame();
 
             }
 
         });
 
-        document.getElementById('instructionsButton').addEventListener('click', () => {
-
-            document.getElementById('instructionsScreen').style.display = 'none';
-
-            document.getElementById('gameScreen').style.display = 'flex';
-
-            startGame();
-
-        });
-
-        let totalScore = 0;
-
-        let pptScore = 0;
-
-        let roundCount = 0;
-
-        let userChoice;
-
-        function generateComputerChoice() {
-
-            const choices = ['rock', 'paper', 'scissors'];
-
-            return choices[Math.floor(Math.random() * choices.length)];
-
-        }
-
-        function playRound(user, computer) {
-
-            if (user === computer) {
-
-                return 'draw';
-
-            } else if ((user === 'rock' && computer === 'scissors') ||
-
-                (user === 'paper' && computer === 'rock') ||
-
-                (user === 'scissors' && computer === 'paper')) {
-
-                return 'win';
-
-            } else {
-
-                return 'lose';
-
-            }
-
-        }
-        document.querySelectorAll('.ppt-button').forEach(button => {
-
-            button.addEventListener('click', () => {
-
-                userChoice = button.getAttribute('data-choice');
-
-                const computerChoice = generateComputerChoice();
-
-                const result = playRound(userChoice, computerChoice);
-
-                if (result === 'win') {
-
-                    pptScore++;
-
-                }
-
-                roundCount++;
-
-                if (roundCount === 3) {
-
-                    totalScore += pptScore;
-
-                    document.getElementById('resultScreen').style.display = 'flex';
-
-                    document.getElementById('nextGameScreen').style.display = 'none';
-
-                    document.getElementById('totalScore').textContent = totalScore;
-
-                } else {
-
-                    document.getElementById('pptScore').textContent = pptScore;
-
-                }
-
-            });
-
-        });
-
-        let totalScore = 0;
+        let snakeScore = 0;
 
         const canvas = document.getElementById('gameCanvas');
 
@@ -334,8 +252,6 @@
         let direction = null;
 
         let food = generateFood();
-
-        let score = 0;
 
         function generateFood() {
 
@@ -397,7 +313,7 @@
 
             if (snakeX === food.x && snakeY === food.y) {
 
-                score++;
+                snakeScore++;
 
                 food = generateFood();
 
@@ -413,25 +329,17 @@
 
                 clearInterval(game);
 
-                totalScore += score;
-
                 document.getElementById('gameScreen').style.display = 'none';
 
                 document.getElementById('resultScreen').style.display = 'flex';
 
-                document.getElementById('totalScore').textContent = totalScore;
+                document.getElementById('snakeScore').textContent = snakeScore;
 
                 return;
 
             }
 
             snake.unshift(newHead);
-
-            ctx.fillStyle = 'black';
-
-            ctx.font = '20px Arial';
-
-            ctx.fillText('Score: ' + score, 5, canvas.height - 5);
 
         }
 
@@ -451,7 +359,7 @@
 
         }
 
-        function startGame() {
+        function startSnakeGame() {
 
             direction = 'RIGHT';
 
@@ -481,18 +389,87 @@
 
             document.getElementById('resultScreen').style.display = 'none';
 
-            document.getElementById('nextGameScreen').style.display = 'flex';
+            document.getElementById('pptScreen').style.display = 'flex';
+
+        });
+
+        document.querySelectorAll('.ppt-button').forEach(button => {
+
+            button.addEventListener('click', () => {
+
+                const userChoice = button.getAttribute('data-choice');
+
+                const computerChoice = generateComputerChoice();
+
+                const result = playRound(userChoice, computerChoice);
+
+                updatePPTScore(result);
+
+            });
+
+        });
+
+        function generateComputerChoice() {
+
+            const choices = ['rock', 'paper', 'scissors'];
+
+            return choices[Math.floor(Math.random() * choices.length)];
+
+        }
+
+        function playRound(user, computer) {
+
+            if (user === computer) {
+
+                return 'draw';
+
+            } else if ((user === 'rock' && computer === 'scissors') ||
+
+                (user === 'paper' && computer === 'rock') ||
+
+                (user === 'scissors' && computer === 'paper')) {
+
+                return 'win';
+
+            } else {
+
+                return 'lose';
+
+            }
+
+        }
+
+        let pptScore = 0;
+
+        let consecutiveWins = 0;
+
+        function updatePPTScore(result) {
+
+            if (result === 'win') {
+
+                pptScore++;
+
+                consecutiveWins++;
+
+            } else {
+
+                consecutiveWins = 0;
+
+            }
+
+            if (consecutiveWins === 3) {
+
+                pptScore += 5; // Pontuação extra para 3 vitórias consecutivas
+
+            }
 
             document.getElementById('pptScore').textContent = pptScore;
 
-            pptScore = 0;
-
-            roundCount = 0;
-
-        });
+        }
 
     </script>
 
 </body>
+
 </html>
 
