@@ -183,33 +183,7 @@
 
         <section>
 
-            <p>Sua pontuação no Snake: <span id="snakeScore">0</span></p>
-
-            <button id="nextGameButton">Próximo</button>
-
-        </section>
-
-    </div>
-
-    <div id="pptScreen" class="screen">
-
-        <h2>Pedra, Papel ou Tesoura</h2>
-
-        <section>
-
-            <p>Sua pontuação no Snake: <span id="snakeScoreResult">0</span></p>
-
-            <p>Sua pontuação no Pedra, Papel ou Tesoura: <span id="pptScore">0</span></p>
-            
-            <div id="choices">
-
-                <button class="ppt-button" data-choice="rock">Pedra</button>
-
-                <button class="ppt-button" data-choice="paper">Papel</button>
-
-                <button class="ppt-button" data-choice="scissors">Tesoura</button>
-
-            </div>
+            <p>Sua pontuação total: <span id="totalScore">0</span></p>
 
         </section>
 
@@ -217,17 +191,11 @@
 
     <script>
 
-        let nickname = '';
-
-        let snakeScore = 0;
-
-        let pptScore = 0;
-
         document.getElementById('nicknameScreen').style.display = 'flex';
 
         document.getElementById('nicknameButton').addEventListener('click', () => {
 
-            nickname = document.getElementById('nicknameInput').value.trim();
+            const nickname = document.getElementById('nicknameInput').value.trim();
 
             if (nickname) {
 
@@ -243,236 +211,92 @@
 
         });
 
+        let snakeScore = 0;
+        let game;
+
         const canvas = document.getElementById('gameCanvas');
-
         const ctx = canvas.getContext('2d');
-
         const box = 20;
-
         let snake = [];
-
         snake[0] = { x: 9 * box, y: 10 * box };
-
         let direction = null;
-
         let food = generateFood();
 
         function generateFood() {
-
             let newFood;
-
             let foodOnSnake;
-
             do {
-
                 newFood = {
-
                     x: Math.floor(Math.random() * 15 + 1) * box,
-
                     y: Math.floor(Math.random() * 15 + 1) * box,
-
                 };
-
                 foodOnSnake = snake.some(segment => segment.x === newFood.x && segment.y === newFood.y);
-
             } while (foodOnSnake);
-
             return newFood;
-
         }
 
         function draw() {
-
             ctx.fillStyle = 'white';
-
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-
             for (let i = 0; i < snake.length; i++) {
-
                 ctx.fillStyle = i === 0 ? 'green' : 'lightgreen';
-
                 ctx.fillRect(snake[i].x, snake[i].y, box, box);
-
                 ctx.strokeStyle = 'darkgreen';
-
                 ctx.strokeRect(snake[i].x, snake[i].y, box, box);
-
             }
-
             ctx.fillStyle = 'red';
-
             ctx.fillRect(food.x, food.y, box, box);
-
             let snakeX = snake[0].x;
-
             let snakeY = snake[0].y;
-
             if (direction === 'LEFT') snakeX -= box;
-
             if (direction === 'UP') snakeY -= box;
-
             if (direction === 'RIGHT') snakeX += box;
-
             if (direction === 'DOWN') snakeY += box;
-
             if (snakeX === food.x && snakeY === food.y) {
-
                 snakeScore++;
-
                 food = generateFood();
-
             } else {
-
                 snake.pop();
-
             }
-
             let newHead = { x: snakeX, y: snakeY };
-
             if (snakeX < 0 || snakeY < 0 || snakeX >= canvas.width || snakeY >= canvas.height || collision(newHead, snake)) {
-
                 clearInterval(game);
-
                 document.getElementById('gameScreen').style.display = 'none';
-
                 document.getElementById('resultScreen').style.display = 'flex';
-
                 document.getElementById('snakeScore').textContent = snakeScore;
-
+                gameEnd(); // Chamando a função gameEnd() quando o jogo termina
+                return;
             }
-
             snake.unshift(newHead);
-
-        }
-
-        function collision(head, array) {
-
-            for (let i = 0; i < array.length; i++) {
-
-                if (head.x === array[i].x && head.y === array[i].y) {
-
-                    return true;
-
-                }
-
-            }
-
-            return false;
-
         }
 
         function startSnakeGame() {
-
             direction = 'RIGHT';
-
             game = setInterval(draw, 260);
-
         }
 
         document.querySelectorAll('.control-button').forEach(button => {
-
             button.addEventListener('click', () => {
-
                 const newDirection = button.getAttribute('data-direction');
-
                 if (newDirection === 'LEFT' && direction !== 'RIGHT') direction = newDirection;
-
                 if (newDirection === 'UP' && direction !== 'DOWN') direction = newDirection;
-
                 if (newDirection === 'RIGHT' && direction !== 'LEFT') direction = newDirection;
-
                 if (newDirection === 'DOWN' && direction !== 'UP') direction = newDirection;
-
             });
-
         });
 
-        document.getElementById('nextGameButton').addEventListener('click', () => {
-
-            document.getElementById('resultScreen').style.display = 'none';
-
-            document.getElementById('pptScreen').style.display = 'flex';
-
-            startPPTGame();
-
-        });
-
-        document.querySelectorAll('.ppt-button').forEach(button => {
-
-            button.addEventListener('click', () => {
-
-                const userChoice = button.getAttribute('data-choice');
-
-                const computerChoice = generateComputerChoice();
-
-                const result = playRound(userChoice, computerChoice);
-
-                updatePPTScore(result);
-
-            });
-
-        });
-
-        function generateComputerChoice() {
-
-            const choices = ['rock', 'paper', 'scissors'];
-
-            return choices[Math.floor(Math.random() * choices.length)];
-
-        }
-
-        function playRound(user, computer) {
-
-            if (user === computer) {
-
-                return 'draw';
-
-            } else if ((user === 'rock' && computer === 'scissors') ||
-
-                (user === 'paper' && computer === 'rock') ||
-
-                (user === 'scissors' && computer === 'paper')) {
-
-                return 'win';
-
-            } else {
-
-                return 'lose';
-
+        function collision(head, array) {
+            for (let i = 0; i < array.length; i++) {
+                if (head.x === array[i].x && head.y === array[i].y) {
+                    return true;
+                }
             }
-
+            return false;
         }
 
-        function updatePPTScore(result) {
-
-            if (result === 'win') {
-
-                pptScore++;
-
-            }
-
-            document.getElementById('pptScore').textContent = pptScore;
-
-        }
-
-        function startPPTGame() {
-
-            pptScore = 0;
-
-            consecutiveWins = 0;
-
-        }
-
-        function showFinalResults() {
-
+        function gameEnd() {
             const totalScore = snakeScore + pptScore;
-
-            document.getElementById('snakeScoreResult').textContent = snakeScore;
-
-            document.getElementById('pptScore').textContent = pptScore;
-
-            alert(`Parabéns ${nickname}!\n\nPontuação Final:\nSnake: ${snakeScore}\nPedra, Papel ou Tesoura: ${pptScore}\n\nPontuação Total: ${totalScore}`);
-
+            document.getElementById('totalScore').textContent = totalScore;
         }
 
     </script>
