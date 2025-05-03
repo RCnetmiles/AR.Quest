@@ -3,9 +3,11 @@
   <head>
     <title>AR Car Collect Coins</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- A-Frame e AR.js -->
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ar.js@3.4.4/aframe/build/aframe-ar.min.js"></script>
     <style>
+      body { margin: 0; overflow: hidden; }
       #controls {
         position: fixed;
         bottom: 20px;
@@ -14,7 +16,6 @@
         text-align: center;
         z-index: 999;
       }
-
       #controls button {
         padding: 15px;
         font-size: 20px;
@@ -24,7 +25,6 @@
         border: none;
         border-radius: 10px;
       }
-
       #score {
         position: fixed;
         top: 10px;
@@ -38,38 +38,62 @@
       }
     </style>
   </head>
-  <body style="margin: 0; overflow: hidden;">
+  <body>
+    <!-- Cena AR -->
     <a-scene
-      embedded
-      arjs="sourceType: webcam; debugUIEnabled: false;"
       vr-mode-ui="enabled: false"
-      renderer="logarithmicDepthBuffer: true;"
+      embedded
+      arjs="sourceType: webcam; debugUIEnabled: false; gpsMinAccuracy: 100; gpsTimeInterval: 1000;"
     >
-      <!-- AR Marker -->
-      <a-marker preset="hiro">
-        <!-- Carro (Cubo) -->
-        <a-box id="car" position="0 0.5 0" color="blue" depth="0.5" height="0.5" width="0.5"></a-box>
+      <!-- Carro (Cubo Azul) -->
+      <a-box
+        id="car"
+        gps-entity-place="latitude: -22.9068; longitude: -43.1729;"
+        position="0 0 0"
+        depth="0.5"
+        height="0.5"
+        width="0.5"
+        color="blue"
+      ></a-box>
 
-        <!-- Moedas -->
-        <a-sphere class="coin" position="0 0.5 -1" radius="0.2" color="gold"></a-sphere>
-        <a-sphere class="coin" position="1 0.5 -2" radius="0.2" color="gold"></a-sphere>
-        <a-sphere class="coin" position="-1 0.5 -1.5" radius="0.2" color="gold"></a-sphere>
-      </a-marker>
+      <!-- Moedas (Esferas Douradas) -->
+      <a-sphere
+        class="coin"
+        gps-entity-place="latitude: -22.9069; longitude: -43.1730;"
+        position="0 0 0"
+        radius="0.2"
+        color="gold"
+      ></a-sphere>
+      <a-sphere
+        class="coin"
+        gps-entity-place="latitude: -22.9070; longitude: -43.1731;"
+        position="0 0 0"
+        radius="0.2"
+        color="gold"
+      ></a-sphere>
+      <a-sphere
+        class="coin"
+        gps-entity-place="latitude: -22.9071; longitude: -43.1732;"
+        position="0 0 0"
+        radius="0.2"
+        color="gold"
+      ></a-sphere>
 
-      <a-entity camera></a-entity>
+      <!-- Câmera -->
+      <a-camera gps-camera rotation-reader></a-camera>
     </a-scene>
 
     <!-- Controles -->
     <div id="controls">
-      <button onclick="moveCar(0, 0, -0.2)">⬆️</button>
+      <button onclick="moveCar(0, 0, -0.0001)">⬆️</button>
       <br>
-      <button onclick="moveCar(-0.2, 0, 0)">⬅️</button>
-      <button onclick="moveCar(0.2, 0, 0)">➡️</button>
+      <button onclick="moveCar(-0.0001, 0, 0)">⬅️</button>
+      <button onclick="moveCar(0.0001, 0, 0)">➡️</button>
       <br>
-      <button onclick="moveCar(0, 0, 0.2)">⬇️</button>
+      <button onclick="moveCar(0, 0, 0.0001)">⬇️</button>
     </div>
 
-    <!-- Score -->
+    <!-- Pontuação -->
     <div id="score">Moedas: <span id="scoreValue">0</span></div>
 
     <script>
