@@ -1,43 +1,27 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <title>Tycoon WebAR</title>
-    <script src="https://cdn.8thwall.com/web/xrextras/xrextras.js"></script>
-    <script src="https://cdn.8thwall.com/web/aframe/8frame.js"></script>
-    <script src="script.js"></script>
-    <style>body { margin: 0; }</style>
+    <meta charset="utf-8" />
+    <title>VR Room</title>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <a-scene
-      xrextras-almost-there
-      xrextras-loading
-      xrextras-runtime-error
-      xrweb
-      renderer="colorManagement: true;"
-    >
-      <!-- Câmera -->
-      <a-camera position="0 1.6 0" look-controls="true"></a-camera>
+    <a-scene vr-mode-ui="enabled: true" embedded>
 
-      <!-- Personagem (Cubo) -->
-      <a-box id="player"
-             color="#4CC3D9"
-             position="0 0 -1"
-             depth="0.3"
-             height="0.3"
-             width="0.3"
-             player-move>
-      </a-box>
+      <!-- Câmera + Controles para Quest2 -->
+      <a-entity id="rig" position="0 1.6 0">
+        <a-camera wasd-controls="true" look-controls="true"></a-camera>
+      </a-entity>
 
-      <!-- Farming Point (Esfera) -->
-      <a-sphere id="coin"
-                color="#FFC107"
-                position="0 0 -2"
-                radius="0.2">
-      </a-sphere>
+      <!-- Ambiente da sala -->
+      <a-box position="0 0 -5" width="10" height="5" depth="0.2" color="#ccc"></a-box> <!-- Parede -->
+      <a-plane rotation="-90 0 0" width="10" height="10" color="#4CAF50"></a-plane> <!-- Chão -->
+      <a-box position="2 0.5 -3" width="1" height="1" depth="1" color="#795548"></a-box> <!-- Móvel -->
 
-      <!-- Texto de Pontuação -->
-      <a-text id="score" value="Pts: 0" position="0 1.8 -2" color="#FFF"></a-text>
+      <!-- Luz e céu -->
+      <a-sky color="#ECECEC"></a-sky>
+      <a-light type="ambient" color="#ffffff" intensity="1"></a-light>
     </a-scene>
   </body>
 </html>
