@@ -1,27 +1,46 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" />
-    <title>VR Room</title>
+    <title>AR Car Collect Coins</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/ar.js@3.4.4/aframe/build/aframe-ar.min.js"></script>
+    <link rel="stylesheet" href="style.css">
   </head>
-  <body>
-    <a-scene vr-mode-ui="enabled: true" embedded>
+  <body style="margin: 0; overflow: hidden;">
+    <a-scene
+      embedded
+      arjs="sourceType: webcam; debugUIEnabled: false;"
+      vr-mode-ui="enabled: false"
+      renderer="logarithmicDepthBuffer: true;"
+    >
+      <!-- AR Marker -->
+      <a-marker preset="hiro">
+        <!-- Carro (Cubo) -->
+        <a-box id="car" position="0 0.5 0" color="blue" depth="0.5" height="0.5" width="0.5"></a-box>
 
-      <!-- Câmera + Controles para Quest2 -->
-      <a-entity id="rig" position="0 1.6 0">
-        <a-camera wasd-controls="true" look-controls="true"></a-camera>
-      </a-entity>
+        <!-- Moedas -->
+        <a-sphere class="coin" position="0 0.5 -1" radius="0.2" color="gold"></a-sphere>
+        <a-sphere class="coin" position="1 0.5 -2" radius="0.2" color="gold"></a-sphere>
+        <a-sphere class="coin" position="-1 0.5 -1.5" radius="0.2" color="gold"></a-sphere>
+      </a-marker>
 
-      <!-- Ambiente da sala -->
-      <a-box position="0 0 -5" width="10" height="5" depth="0.2" color="#ccc"></a-box> <!-- Parede -->
-      <a-plane rotation="-90 0 0" width="10" height="10" color="#4CAF50"></a-plane> <!-- Chão -->
-      <a-box position="2 0.5 -3" width="1" height="1" depth="1" color="#795548"></a-box> <!-- Móvel -->
-
-      <!-- Luz e céu -->
-      <a-sky color="#ECECEC"></a-sky>
-      <a-light type="ambient" color="#ffffff" intensity="1"></a-light>
+      <a-entity camera></a-entity>
     </a-scene>
+
+    <!-- Controles -->
+    <div id="controls">
+      <button onclick="moveCar(0, 0, -0.2)">⬆️</button>
+      <br>
+      <button onclick="moveCar(-0.2, 0, 0)">⬅️</button>
+      <button onclick="moveCar(0.2, 0, 0)">➡️</button>
+      <br>
+      <button onclick="moveCar(0, 0, 0.2)">⬇️</button>
+    </div>
+
+    <!-- Score -->
+    <div id="score">Moedas: <span id="scoreValue">0</span></div>
+
+    <script src="script.js"></script>
   </body>
 </html>
