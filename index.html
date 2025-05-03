@@ -5,7 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ar.js@3.4.4/aframe/build/aframe-ar.min.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <style>
+      #controls {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        text-align: center;
+        z-index: 999;
+      }
+
+      #controls button {
+        padding: 15px;
+        font-size: 20px;
+        margin: 5px;
+        background-color: rgba(0,0,0,0.6);
+        color: white;
+        border: none;
+        border-radius: 10px;
+      }
+
+      #score {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        background: rgba(0,0,0,0.5);
+        color: white;
+        padding: 10px 20px;
+        font-size: 18px;
+        border-radius: 8px;
+        z-index: 999;
+      }
+    </style>
   </head>
   <body style="margin: 0; overflow: hidden;">
     <a-scene
@@ -41,6 +72,36 @@
     <!-- Score -->
     <div id="score">Moedas: <span id="scoreValue">0</span></div>
 
-    <script src="script.js"></script>
+    <script>
+      let score = 0;
+
+      function moveCar(dx, dy, dz) {
+        const car = document.querySelector('#car');
+        const pos = car.getAttribute('position');
+        const newPos = {
+          x: pos.x + dx,
+          y: pos.y + dy,
+          z: pos.z + dz
+        };
+        car.setAttribute('position', newPos);
+        checkCollision(newPos);
+      }
+
+      function checkCollision(carPos) {
+        document.querySelectorAll('.coin').forEach(coin => {
+          const coinPos = coin.getAttribute('position');
+          const distance = Math.sqrt(
+            Math.pow(carPos.x - coinPos.x, 2) +
+            Math.pow(carPos.y - coinPos.y, 2) +
+            Math.pow(carPos.z - coinPos.z, 2)
+          );
+          if (distance < 0.4) {
+            coin.parentNode.removeChild(coin);
+            score++;
+            document.getElementById('scoreValue').innerText = score;
+          }
+        });
+      }
+    </script>
   </body>
 </html>
